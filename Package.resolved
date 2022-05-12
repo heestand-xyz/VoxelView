@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "displaylink",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/heestand-xyz/DisplayLink",
+      "state" : {
+        "revision" : "c954713d46055625e324f23fa50b5cc3c7f56486",
+        "version" : "1.0.2"
+      }
+    }
+  ],
+  "version" : 2
+}
