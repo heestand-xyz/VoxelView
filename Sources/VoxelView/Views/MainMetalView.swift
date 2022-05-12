@@ -48,15 +48,21 @@ public class MetalView: _View {
         displayLink = DisplayLink()
         super.init(frame: frame)
         displayLink.listen(frameLoop: displayLinkDidFire)
+        displayLink.start()
+        #if os(macOS)
+        wantsLayer = true
+        layer = CAMetalLayer()
+        metalLayer.device = MTLCreateSystemDefaultDevice()
+        #endif
     }
     
     required init?(coder aDecoder: NSCoder) {
         displayLink = DisplayLink()
-        super.init(coder: aDecoder)        
+        super.init(coder: aDecoder)
     }
     
     func render(texture: MTLTexture) {
-        
+        print("------------>")
     }
     
     #if !os(macOS)
