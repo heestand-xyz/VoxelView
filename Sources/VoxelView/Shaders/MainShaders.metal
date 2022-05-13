@@ -97,8 +97,10 @@ fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]],
     if (diffuse.a < 0.5) {
 //       discard_fragment();
     }
- 
-    return float4(diffuse.xyz * (0.7 + shadow_sample * 0.3) , 1); //
+    
+    bool shadowsEnabled = false;
+    
+    return float4(diffuse.xyz * (shadowsEnabled ? 0.7 + shadow_sample * 0.3 : 1.0) , 1); //
 }
 
 

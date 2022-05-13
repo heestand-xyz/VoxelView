@@ -8,18 +8,18 @@ public struct VoxelView: ViewRepresentable {
     
     private let texture: MTLTexture
     private let textureID: UUID
-    private let zoom: CGFloat
+    private let scale: CGFloat
     private let rotationX: Angle
     private let rotationY: Angle
     
     public init(texture: MTLTexture,
                 textureID: UUID,
-                zoom: CGFloat = 1.0,
+                scale: CGFloat = 1.0,
                 rotationX: Angle = .zero,
                 rotationY: Angle = .zero) {
         self.texture = texture
         self.textureID = textureID
-        self.zoom = zoom
+        self.scale = scale
         self.rotationX = rotationX
         self.rotationY = rotationY
     }
@@ -32,14 +32,14 @@ public struct VoxelView: ViewRepresentable {
     }
     
     public func updateView(_ view: MetalView, context: Context) {
-        if context.coordinator.lastTextureID != textureID {
-            view.render(texture: texture)
-            context.coordinator.lastTextureID = textureID
-        }
-        context.coordinator.renderer?.cameraDistance = Float(zoom) * Renderer.defaultCameraDistance
-        context.coordinator.renderer?.rotationX = Float(rotationX.radians)
-        context.coordinator.renderer?.rotationY = Float(rotationY.radians)
-        view.render()
+//        if context.coordinator.lastTextureID != textureID {
+//            view.render(texture: texture)
+//            context.coordinator.lastTextureID = textureID
+//        }
+//        context.coordinator.renderer?.cameraDistance = Float(scale) * Renderer.defaultCameraDistance
+//        context.coordinator.renderer?.rotationX = min(max(Float(rotationX.radians), -.pi / 2 + 0.001), .pi / 2 - 0.001)
+//        context.coordinator.renderer?.rotationY = Float(rotationY.radians)
+//        view.render()
     }
     
     public func makeCoordinator() -> Coordinator {

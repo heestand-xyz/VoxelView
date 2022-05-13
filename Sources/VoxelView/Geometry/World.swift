@@ -11,39 +11,39 @@ class World {
         size = (width, height, depth)
     }
     
-    static func getBlock() -> World {
-        let world = World(width: 1, height: 1, depth: 2)
-        let block = Block(visible: true, type: .grass, color: nil)
-        world.blocks.append(block)
-        world.blocks.append(block)
-
-        return world
-    }
+//    static func getBlock() -> World {
+//        let world = World(width: 1, height: 1, depth: 2)
+//        let block = Block(visible: true, type: .grass, color: nil)
+//        world.blocks.append(block)
+//        world.blocks.append(block)
+//
+//        return world
+//    }
     
     static func getTest() -> World {
         
         let world = World(width: CHUNK_SIZE, height: CHUNK_SIZE, depth: CHUNK_SIZE)
         
-        for _ in 0..<CHUNK_SIZE {
-            for _ in 0..<CHUNK_SIZE {
-                for _ in 0..<CHUNK_SIZE {
-                    let block = Block(visible: true, type: .air, color: nil)
-                    world.blocks.append(block)
-                }
-            }
-        }
+//        for _ in 0..<CHUNK_SIZE {
+//            for _ in 0..<CHUNK_SIZE {
+//                for _ in 0..<CHUNK_SIZE {
+//                    let block = Block(visible: true, type: .air, color: nil)
+//                    world.blocks.append(block)
+//                }
+//            }
+//        }
         
         let count = CHUNK_SIZE
         for x in 0..<count {
             for y in 0..<count {
                 for z in 0..<count {
-                    let index = BlockUtilities.get1DIndexFromXYZ(x: x, y: y, z: z, chunkSize: (CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
-                    let block = world.blocks[index]
-                    block.color = SIMD4<Float>(Float(x) / Float(count - 1),
-                                               Float(y) / Float(count - 1),
-                                               Float(z) / Float(count - 1),
-                                               1.0)
-                    block.type = .trunk
+//                    let index = BlockUtilities.get1DIndexFromXYZ(x: x, y: y, z: z, chunkSize: (CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
+                    let color = SIMD4<Float>(Float(x) / Float(count - 1),
+                                             Float(y) / Float(count - 1),
+                                             Float(z) / Float(count - 1),
+                                             1.0)
+                    let block = Block(visible: true, type: .trunk, color: color)
+                    world.blocks.append(block)
                 }
             }
         }
