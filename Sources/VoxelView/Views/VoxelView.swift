@@ -4,63 +4,54 @@
 
 import SwiftUI
 
-#if os(macOS)
-
-public struct VoxelView: NSViewRepresentable {
+public struct VoxelView: ViewRepresentable {
     
     private let texture: MTLTexture
+    private let textureID: UUID
+    private let zoom: CGFloat
+    private let rotationX: Angle
+    private let rotationY: Angle
     
-    public init(texture: MTLTexture) {
+    public init(texture: MTLTexture,
+                textureID: UUID,
+                zoom: CGFloat = 1.0,
+                rotationX: Angle = .zero,
+                rotationY: Angle = .zero) {
         self.texture = texture
+        self.textureID = textureID
+        self.zoom = zoom
+        self.rotationX = rotationX
+        self.rotationY = rotationY
     }
     
-    public func makeNSView(context: Context) -> MetalView {
+    public func makeView(context: Context) -> MetalView {
         let metalView = MetalView()
         context.coordinator.setup(metalView: metalView)
         metalView.delegate = context.coordinator
         return metalView
     }
     
-    public func updateNSView(_ view: MetalView, context: Context) {
-        view.render(texture: texture)
+    public func updateView(_ view: MetalView, context: Context) {
+        if context.coordinator.lastTextureID != textureID {
+            view.render(texture: texture)
+            context.coordinator.lastTextureID = textureID
+        }
+        context.coordinator.renderer?.cameraDistance = Float(zoom) * Renderer.defaultCameraDistance
+        context.coordinator.renderer?.rotationX = Float(rotationX.radians)
+        context.coordinator.renderer?.rotationY = Float(rotationY.radians)
+        view.render()
     }
     
     public func makeCoordinator() -> Coordinator {
         Coordinator()
     }
 }
-
-#else
-
-public struct VoxelView: UIViewRepresentable {
-    
-    private let texture: MTLTexture
-    
-    public init(texture: MTLTexture) {
-        self.texture = texture
-    }
-    
-    public func makeUIView(context: Context) -> MetalView {
-        let metalView = MetalView()
-        context.coordinator.setup(metalView: metalView)
-        metalView.delegate = context.coordinator
-        return metalView
-    }
-    
-    public func updateUIView(_ view: MetalView, context: Context) {
-        view.render(texture: texture)
-    }
-    
-    public func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-}
-
-#endif
 
 public class Coordinator: MetalViewDelegate {
     
     var renderer: Renderer?
+    
+    var lastTextureID: UUID?
     
     func setup(metalView: MetalView) {
         renderer = Renderer(view: metalView)

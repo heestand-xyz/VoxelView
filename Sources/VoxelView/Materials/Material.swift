@@ -14,7 +14,7 @@ class Material: NSObject {
         self.name = name
         self.vertexFunctionName = vertexFunctionName
         self.fragmentFunctionName = fragmentFunctionName
-        library = device.makeDefaultLibrary()!
+        library = try! device.makeDefaultLibrary(bundle: .module)
         vertexFunction = library.makeFunction(name: vertexFunctionName)!
         fragmentFunction = library.makeFunction(name: fragmentFunctionName)!
         super.init()

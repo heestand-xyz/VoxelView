@@ -32,7 +32,7 @@ public class MetalView: _View {
     
     var drawable:CAMetalDrawable!
     
-    private let displayLink: DisplayLink
+//    private let displayLink: DisplayLink
     
     weak var delegate: MetalViewDelegate?
     
@@ -44,22 +44,26 @@ public class MetalView: _View {
     
     override init(frame: CGRect) {
         
-        displayLink = DisplayLink()
+//        displayLink = DisplayLink()
         
         super.init(frame: frame)
         
-        displayLink.listen(frameLoop: displayLinkDidFire)
-        displayLink.start()
+//        displayLink.listen(frameLoop: displayLinkDidFire)
+//        displayLink.start()
         
         #if os(macOS)
         wantsLayer = true
         layer = CAMetalLayer()
         metalLayer.device = MTLCreateSystemDefaultDevice()
         #endif
+        
+        DispatchQueue.main.async {
+            self.render()
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
-        displayLink = DisplayLink()
+//        displayLink = DisplayLink()
         super.init(coder: aDecoder)
     }
     
@@ -114,8 +118,13 @@ public class MetalView: _View {
         }
     }
     
-    private func displayLinkDidFire() {
-        drawable = metalLayer.nextDrawable()
+//    private func displayLinkDidFire() {
+//        render()
+//    }
+    
+    func render() {
+        guard let drawable = metalLayer.nextDrawable() else { return }
+        self.drawable = drawable
         delegate?.viewIsReadyToDraw(view: self)
     }
     

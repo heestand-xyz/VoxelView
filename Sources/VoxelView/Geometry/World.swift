@@ -33,14 +33,15 @@ class World {
             }
         }
         
-        for x in 0..<CHUNK_SIZE {
-            for y in 0..<CHUNK_SIZE {
-                for z in 0..<CHUNK_SIZE {
-                    let index = BlockUtilities.get1DIndexFromXYZ(x: x, y: y, z: CHUNK_SIZE - z, chunkSize: (CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
+        let count = CHUNK_SIZE
+        for x in 0..<count {
+            for y in 0..<count {
+                for z in 0..<count {
+                    let index = BlockUtilities.get1DIndexFromXYZ(x: x, y: y, z: z, chunkSize: (CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE))
                     let block = world.blocks[index]
-                    block.color = SIMD4<Float>(Float(x) / Float(CHUNK_SIZE - 1),
-                                               Float(y) / Float(CHUNK_SIZE - 1),
-                                               Float(z) / Float(CHUNK_SIZE - 1),
+                    block.color = SIMD4<Float>(Float(x) / Float(count - 1),
+                                               Float(y) / Float(count - 1),
+                                               Float(z) / Float(count - 1),
                                                1.0)
                     block.type = .trunk
                 }

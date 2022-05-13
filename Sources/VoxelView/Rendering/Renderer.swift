@@ -67,7 +67,8 @@ class Renderer:MetalViewDelegate {
     
     // view/state
     let metalView:MetalView!
-    var cameraDistance:Float = 150.0
+    static let defaultCameraDistance:Float = 150.0
+    var cameraDistance:Float = Renderer.defaultCameraDistance
     var timePassed:Float = 0
     var rotationY:Float = 0
     var rotationX:Float = 0
@@ -147,7 +148,7 @@ class Renderer:MetalViewDelegate {
         commandQueue = metalDevice.makeCommandQueue()
         
         // create our frag and vert functions from the files in our library
-        let library:MTLLibrary = metalDevice.makeDefaultLibrary()!
+        let library:MTLLibrary = try! metalDevice.makeDefaultLibrary(bundle: .module)
         
         let shadowVertexFunction = library.makeFunction(name: "shadow_vertex")
 

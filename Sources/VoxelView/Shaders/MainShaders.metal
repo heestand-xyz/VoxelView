@@ -72,18 +72,11 @@ vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
 fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]],
                                    texture2d<float> diffuseTexture [[texture(0)]],
                                    depth2d<float> shadowTexture [[texture(1)]],
-                                   sampler albedoSampler [[sampler(0)]],
                                    sampler depthSampler [[sampler(1)]])
 {
 //    return float4(vertexIn.normal.x * 0.5 + 0.5, vertexIn.normal.y * 0.5 + 0.5, vertexIn.normal.z * 0.5 + 0.5 , 1.0);
     
-    float4 diffuse;
-    
-    if(vertexIn.color.a == 0) {
-        diffuse = diffuseTexture.sample(albedoSampler, vertexIn.uv.xy); // * vertexIn.color;
-    } else {
-        diffuse = vertexIn.color;
-    }
+    float4 diffuse = vertexIn.color;
     
     diffuse *= vertexIn.directional_light_level;
     
