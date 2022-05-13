@@ -32,14 +32,14 @@ public struct VoxelView: ViewRepresentable {
     }
     
     public func updateView(_ view: MetalView, context: Context) {
-//        if context.coordinator.lastTextureID != textureID {
-//            view.render(texture: texture)
-//            context.coordinator.lastTextureID = textureID
-//        }
-//        context.coordinator.renderer?.cameraDistance = Float(scale) * Renderer.defaultCameraDistance
-//        context.coordinator.renderer?.rotationX = min(max(Float(rotationX.radians), -.pi / 2 + 0.001), .pi / 2 - 0.001)
-//        context.coordinator.renderer?.rotationY = Float(rotationY.radians)
-//        view.render()
+        if context.coordinator.lastTextureID != textureID {
+            context.coordinator.renderer?.texture = texture
+            context.coordinator.lastTextureID = textureID
+        }
+        context.coordinator.renderer?.cameraDistance = Float(scale) * Renderer.defaultCameraDistance
+        context.coordinator.renderer?.rotationX = min(max(Float(rotationX.radians), -.pi / 2 + 0.001), .pi / 2 - 0.001)
+        context.coordinator.renderer?.rotationY = Float(rotationY.radians)
+        view.render()
     }
     
     public func makeCoordinator() -> Coordinator {

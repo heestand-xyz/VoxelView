@@ -84,6 +84,8 @@ class Renderer:MetalViewDelegate {
     // ui/event
     var handlers:[ControllerHandler] = []
     
+    var texture: MTLTexture?
+    
     /// Initializes a renderer given a MetalView to render to
     ///
     /// - Parameter view: The view the renderer should render to
@@ -327,6 +329,14 @@ class Renderer:MetalViewDelegate {
             if let diffuseTexture = renderable.diffuseTexture {
                 commandEncoder.setFragmentTexture(diffuseTexture, index: 0)
             }
+            
+            if let sampler: MTLSamplerState = sampler() {
+                commandEncoder.setVertexSamplerState(sampler, index: 0)
+            }
+            
+            if let texture: MTLTexture = texture {
+                commandEncoder.setVertexTexture(texture, index: 0)
+            }
 
             // add our shadow texture and sampler state
             // TODO: I think we're creating our sampler state in the shader, so we need to remove that part
@@ -448,5 +458,17 @@ class Renderer:MetalViewDelegate {
         
         zoomingLastAmount = amount
         cameraDistance += Float(thisZoomAmount)
+    }
+    
+    
+    func sampler() -> MTLSamplerState? {
+        let samplerInfo = MTLSamplerDescriptor()
+        samplerInfo.minFilter = .linear
+        samplerInfo.magFilter = .linear
+        samplerInfo.sAddressMode = .clampToZero
+        samplerInfo.tAddressMode = .clampToZero
+        samplerInfo.rAddressMode = .clampToZero
+        samplerInfo.compareFunction = .never
+        return metalDevice.makeSamplerState(descriptor: samplerInfo)
     }
 }

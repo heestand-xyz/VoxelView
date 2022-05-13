@@ -39,22 +39,42 @@ struct Uniforms
 };
 
 vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
-                             constant Uniforms *uniforms [[buffer(1)]],
-                             uint vid [[vertex_id]],
-                             uint iid [[instance_id]])
+                                constant Uniforms *uniforms [[buffer(1)]],
+                                texture3d<float> texture [[ texture(0) ]],
+                                sampler sampler [[ sampler(0) ]],
+                                uint vid [[vertex_id]],
+                                uint iid [[instance_id]])
 {
+    
+    uint width = texture.get_width();
+    uint height = texture.get_height();
+    uint depth = texture.get_depth();
+    
+    // TODO: Check non 1x1x1
+//    uint x = vid % (height * depth);
+//    uint y = (vid * width) % depth;
+//    uint z = vid / (width * height);
+    
+//    float u = float(x + 0.5) / float(width);
+//    float v = float(y + 0.5) / float(height);
+//    float w = float(z + 0.5) / float(depth);
+    uint u = vertices[vid].position.x;
+    uint v = vertices[vid].position.y;
+    uint w = vertices[vid].position.z;
+    float3 uvw = float3(u, v, w);
+    
+    float4 color = texture.sample(sampler, uvw);
+    
     float4 sunDirection = { -1, -2, -1, 1} ;
     
     float dotProduct = dot(normalize(vertices[vid].normal), normalize(-sunDirection.xyz));
-    
-    
     
     VertexOut vertexOut;
     vertexOut.shadow_coord = (uniforms->shadow_mvp_xform_matrix * vertices[vid].position ).xyz;
     vertexOut.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
     vertexOut.normal =   vertices[vid].normal.xyz;
     vertexOut.highlighted = vertices[vid].highlighted;
-    vertexOut.color = vertices[vid].color;
+    vertexOut.color = color;//vertices[vid].color;
     vertexOut.directional_light_level = 0.7 + 0.3 * dotProduct;
 
     float2 uv = vertices[vid].uv;
@@ -78,29 +98,28 @@ fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]],
     
     float4 diffuse = vertexIn.color;
     
-    diffuse *= vertexIn.directional_light_level;
+//    diffuse *= vertexIn.directional_light_level;
     
-    constexpr sampler shadowSampler(coord::normalized,
-                                    filter::linear,
-                                    mip_filter::none,
-                                    address::clamp_to_edge,
-                                    compare_func::less);
+//    constexpr sampler shadowSampler(coord::normalized,
+//                                    filter::linear,
+//                                    mip_filter::none,
+//                                    address::clamp_to_edge,
+//                                    compare_func::less);
     
     // Compare the depth value in the shadow map to the depth value of the fragment in the sun's.
     // frame of reference.  If the sample is occluded, it will be zero.
     
     
-    float shadow_sample = shadowTexture.sample_compare(shadowSampler, vertexIn.shadow_coord.xy, vertexIn.shadow_coord.z);
+//    float shadow_sample = shadowTexture.sample_compare(shadowSampler, vertexIn.shadow_coord.xy, vertexIn.shadow_coord.z);
     
     
     
-    if (diffuse.a < 0.5) {
+//    if (diffuse.a < 0.5) {
 //       discard_fragment();
-    }
-    
-    bool shadowsEnabled = false;
-    
-    return float4(diffuse.xyz * (shadowsEnabled ? 0.7 + shadow_sample * 0.3 : 1.0) , 1); //
+//    }
+        
+    return diffuse;
+//    return float4(diffuse.xyz * 0.7 + shadow_sample * 0.3) , 1);
 }
 
 

@@ -67,10 +67,6 @@ public class MetalView: _View {
         super.init(coder: aDecoder)
     }
     
-    func render(texture: MTLTexture) {
-        print("------------>")
-    }
-    
     #if !os(macOS)
     public override func didMoveToWindow() {
         super.didMoveToWindow()
