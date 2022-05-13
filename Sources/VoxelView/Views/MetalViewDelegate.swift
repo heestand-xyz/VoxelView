@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol MetalViewDelegate {
+protocol MetalViewDelegate: AnyObject {
     func viewIsReadyToDraw(view:MetalView)
 }

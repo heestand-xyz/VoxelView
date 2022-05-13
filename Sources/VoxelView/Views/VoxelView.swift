@@ -15,11 +15,18 @@ public struct VoxelView: NSViewRepresentable {
     }
     
     public func makeNSView(context: Context) -> MetalView {
-        MetalView()
+        let metalView = MetalView()
+        context.coordinator.setup(metalView: metalView)
+        metalView.delegate = context.coordinator
+        return metalView
     }
     
     public func updateNSView(_ view: MetalView, context: Context) {
         view.render(texture: texture)
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator()
     }
 }
 
@@ -34,12 +41,32 @@ public struct VoxelView: UIViewRepresentable {
     }
     
     public func makeUIView(context: Context) -> MetalView {
-        MetalView()
+        let metalView = MetalView()
+        context.coordinator.setup(metalView: metalView)
+        metalView.delegate = context.coordinator
+        return metalView
     }
     
     public func updateUIView(_ view: MetalView, context: Context) {
         view.render(texture: texture)
     }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
 }
 
 #endif
+
+public class Coordinator: MetalViewDelegate {
+    
+    var renderer: Renderer?
+    
+    func setup(metalView: MetalView) {
+        renderer = Renderer(view: metalView)
+    }
+    
+    func viewIsReadyToDraw(view: MetalView) {
+        renderer?.viewIsReadyToDraw(view: view)
+    }
+}

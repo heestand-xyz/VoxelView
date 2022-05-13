@@ -23,11 +23,9 @@ public typealias _View = UIView
 
 public class MetalView: _View {
     
-    var depthTexture:MTLTexture!
-    var metalLayer:CAMetalLayer {
-        get {
-            return (self.layer as! CAMetalLayer)
-        }
+    var depthTexture: MTLTexture!
+    var metalLayer: CAMetalLayer {
+        self.layer as! CAMetalLayer
     }
     
     let passDescriptor = MTLRenderPassDescriptor()
@@ -36,7 +34,7 @@ public class MetalView: _View {
     
     private let displayLink: DisplayLink
     
-    var delegate: MetalViewDelegate?
+    weak var delegate: MetalViewDelegate?
     
     #if !os(macOS)
     public override class var layerClass: AnyClass {
@@ -45,10 +43,14 @@ public class MetalView: _View {
     #endif
     
     override init(frame: CGRect) {
+        
         displayLink = DisplayLink()
+        
         super.init(frame: frame)
+        
         displayLink.listen(frameLoop: displayLinkDidFire)
         displayLink.start()
+        
         #if os(macOS)
         wantsLayer = true
         layer = CAMetalLayer()
