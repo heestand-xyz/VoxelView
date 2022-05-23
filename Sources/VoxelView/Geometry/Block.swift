@@ -43,10 +43,13 @@ class Block {
     
     var numVerts:UInt32 = 0
     
-    init(visible: Bool, type: BlockType, color: SIMD4<Float>?) {
+    let location: (UInt32, UInt32, UInt32)
+    
+    init(visible: Bool, type: BlockType, color: SIMD4<Float>?, location: (UInt32, UInt32, UInt32)) {
         self.visible = visible
         self.type = type
         self.color = color != nil ? color! : SIMD4<Float>(0, 0, 0, 0)
+        self.location = location
         
         triangleVertPositions = [
             .north: [rightBottomBack, leftTopBack, leftBottomBack, rightTopBack, leftTopBack, rightBottomBack],
@@ -105,7 +108,9 @@ class Block {
             let vertex = SVVertex(
                 position: finalPosition,
                 normal: faceNormals[direction]!,
-                uv: uvs[direction]![i], color: color)
+                uv: uvs[direction]![i],
+                color: color,
+                location: location)
             
             vertices.append(vertex)
         }

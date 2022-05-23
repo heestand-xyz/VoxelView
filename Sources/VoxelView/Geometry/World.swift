@@ -42,7 +42,7 @@ class World {
                                              Float(y) / Float(count - 1),
                                              Float(z) / Float(count - 1),
                                              1.0)
-                    let block = Block(visible: true, type: .trunk, color: color)
+                    let block = Block(visible: true, type: .trunk, color: color, location: (UInt32(x), UInt32(y), UInt32(z)))
                     world.blocks.append(block)
                 }
             }

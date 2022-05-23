@@ -18,6 +18,7 @@ struct VertexIn
     bool highlighted;
     float2 uv;
     float3 shadow_coord;
+    uint3 location;
 };
 
 struct VertexOut
@@ -36,6 +37,7 @@ struct Uniforms
     float4x4 modelViewProjectionMatrix;
     float4x4 shadow_mvp_matrix;
     float4x4 shadow_mvp_xform_matrix;
+    uint3 resolution;
 };
 
 vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
@@ -46,21 +48,13 @@ vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
                                 uint iid [[instance_id]])
 {
     
-    uint width = texture.get_width();
-    uint height = texture.get_height();
-    uint depth = texture.get_depth();
+    uint3 resolution = uniforms->resolution;
     
-    // TODO: Check non 1x1x1
-//    uint x = vid % (height * depth);
-//    uint y = (vid * width) % depth;
-//    uint z = vid / (width * height);
+    uint3 location = vertices[vid].location;
     
-//    float u = float(x + 0.5) / float(width);
-//    float v = float(y + 0.5) / float(height);
-//    float w = float(z + 0.5) / float(depth);
-    uint u = vertices[vid].position.x;
-    uint v = vertices[vid].position.y;
-    uint w = vertices[vid].position.z;
+    float u = float(location.x + 0.5) / float(resolution.x);
+    float v = float(location.y + 0.5) / float(resolution.y);
+    float w = float(location.z + 0.5) / float(resolution.z);
     float3 uvw = float3(u, v, w);
     
     float4 color = texture.sample(sampler, uvw);
@@ -72,9 +66,9 @@ vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
     VertexOut vertexOut;
     vertexOut.shadow_coord = (uniforms->shadow_mvp_xform_matrix * vertices[vid].position ).xyz;
     vertexOut.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
-    vertexOut.normal =   vertices[vid].normal.xyz;
+    vertexOut.normal = vertices[vid].normal.xyz;
     vertexOut.highlighted = vertices[vid].highlighted;
-    vertexOut.color = color;//vertices[vid].color;
+    vertexOut.color = color; // vertices[vid].color;
     vertexOut.directional_light_level = 0.7 + 0.3 * dotProduct;
 
     float2 uv = vertices[vid].uv;
@@ -114,9 +108,9 @@ fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]],
     
     
     
-//    if (diffuse.a < 0.5) {
-//       discard_fragment();
-//    }
+    if (diffuse.a < 0.5) {
+       discard_fragment();
+    }
         
     return diffuse;
 //    return float4(diffuse.xyz * 0.7 + shadow_sample * 0.3) , 1);

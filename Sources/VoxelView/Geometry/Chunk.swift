@@ -92,11 +92,11 @@ class Chunk: NSObject {
                             continue
                         }
                         
-                        let neighborBlock = blocks[newIndex]
+//                        let neighborBlock = blocks[newIndex]
                         
-                        if(neighborBlock.type != .air) {
-                            continue;
-                        }
+//                        if(neighborBlock.type != .air) {
+//                            continue;
+//                        }
                         
                         addFace(block: block, position: [Float(i), Float(j), Float(k), 0], direction: direction, color: block.color)
                     }
@@ -140,7 +140,8 @@ class Chunk: NSObject {
                 position: finalPosition,
                 normal: faceNormals[direction]!,
                 uv: uvs[direction]![i],
-                color: color)
+                color: color,
+                location: block.location)
             
             vertices.append(vertex)
         }

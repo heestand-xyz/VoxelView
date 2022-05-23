@@ -18,8 +18,9 @@ struct SVVertex {
     let highlighted:Bool
     let uv:vector_float2
     let shadow_coord:vector_float3
+    let location: (UInt32, UInt32, UInt32)
     
-    init(position:vector_float4, normal: vector_float3, uv:vector_float2, color: SIMD4<Float>?) {
+    init(position:vector_float4, normal: vector_float3, uv:vector_float2, color: SIMD4<Float>?, location: (UInt32, UInt32, UInt32)) {
         self.position = position
         self.normal = normal
         self.uv = uv
@@ -30,6 +31,7 @@ struct SVVertex {
         } else {
             self.color = SIMD4<Float>(0, 0, 0, 0)
         }
+        self.location = location
     }
 }
 
@@ -37,6 +39,7 @@ struct SVUniforms {
     var modelViewProjectionMatrix:matrix_float4x4
     var shadow_mvp_matrix:matrix_float4x4
     var shadow_mvp_xform_matrix:matrix_float4x4
+    let resolution: (UInt32, UInt32, UInt32)
 }
 
 class Renderer:MetalViewDelegate {
@@ -276,7 +279,7 @@ class Renderer:MetalViewDelegate {
             let modelViewProjectionMatrix:matrix_float4x4 = matrix_multiply(mainCameraViewProjectionMatrix, renderable.modelMatrix)
             
             // create and upload our uniforms
-            var uniforms:SVUniforms = SVUniforms(modelViewProjectionMatrix: modelViewProjectionMatrix, shadow_mvp_matrix: shadowMvpMatrix, shadow_mvp_xform_matrix: shadowMvpXformMatrix);
+            var uniforms:SVUniforms = SVUniforms(modelViewProjectionMatrix: modelViewProjectionMatrix, shadow_mvp_matrix: shadowMvpMatrix, shadow_mvp_xform_matrix: shadowMvpXformMatrix, resolution: (UInt32(CHUNK_SIZE), UInt32(CHUNK_SIZE), UInt32(CHUNK_SIZE)));
             let contents = renderable.uniformBuffer.contents()
             memcpy(contents + uniformBufferOffset, &uniforms, MemoryLayout.size(ofValue: uniforms))
             
@@ -347,6 +350,7 @@ class Renderer:MetalViewDelegate {
             
             // draw our geometry
             commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: renderable.indexBuffer.length / MemoryLayout<SVIndex>.size, indexType: .uint32, indexBuffer: renderable.indexBuffer, indexBufferOffset: 0)
+//            commandEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3 * 2 * 6, instanceCount: CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE)
             
             // do the encoding
             commandEncoder.endEncoding()
