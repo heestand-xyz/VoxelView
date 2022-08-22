@@ -82,8 +82,8 @@ class Block {
     ///   - color: The color of the face
     func addFace(position:SIMD4<Float>, direction:Block.Direction, color: SIMD4<Float>?) {
         
-        let offset = -Float(CHUNK_SIZE) * Float(gridSpacing) / 2.0 + 1
-        let offsetArray:SIMD4<Float> = [offset, offset, offset, 0]
+//        let offset = /*-Float(CHUNK_SIZE) * */ -100 * Float(gridSpacing) / 2.0 + 1
+//        let offsetArray:SIMD4<Float> = [offset, offset, offset, 0]
         
         for i in 0..<NUM_SIDES_IN_CUBE {
             triangles.append(numVerts + UInt32(i))
@@ -104,7 +104,7 @@ class Block {
         
         for i in 0..<NUM_SIDES_IN_CUBE {
             let triangleVertPosition = triangleVertPositions[direction]![i]
-            let finalPosition = offsetArray + triangleVertPosition + position * gridSpacing
+            let finalPosition = /*offsetArray + */triangleVertPosition + position * gridSpacing
             let vertex = SVVertex(
                 position: finalPosition,
                 normal: faceNormals[direction]!,

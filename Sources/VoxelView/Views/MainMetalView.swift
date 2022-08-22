@@ -57,14 +57,20 @@ public class MetalView: _View {
         metalLayer.device = MTLCreateSystemDefaultDevice()
         #endif
         
+//        NotificationCenter.default.addObserver(self, selector: #selector(boundsDidChange), name: NSView.boundsDidChangeNotification, object: nil)
+        
         DispatchQueue.main.async {
             self.render()
         }
     }
     
+//    @objc func boundsDidChange() {
+//        render()
+//    }
+    
     required init?(coder aDecoder: NSCoder) {
 //        displayLink = DisplayLink()
-        super.init(coder: aDecoder)
+        fatalError()
     }
     
     #if !os(macOS)
@@ -91,6 +97,7 @@ public class MetalView: _View {
             
             self.metalLayer.drawableSize = drawableSize
             self.initDepthTexture()
+            self.render()
         }
         get {
             return super.frame
@@ -105,7 +112,7 @@ public class MetalView: _View {
         let drawableWidth = Int(drawableSize.width)
         let drawableHeight = Int(drawableSize.height)
         
-        if(depthTexture == nil || depthTexture.width != drawableWidth || depthTexture.height != drawableHeight) {
+        if (depthTexture == nil || depthTexture.width != drawableWidth || depthTexture.height != drawableHeight) {
             let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: drawableWidth, height: drawableHeight, mipmapped: false)
             descriptor.usage = .renderTarget
             descriptor.storageMode = .private
@@ -124,11 +131,11 @@ public class MetalView: _View {
         delegate?.viewIsReadyToDraw(view: self)
     }
     
-    func currentRenderPassDescriptor(clearDepth: Bool)->MTLRenderPassDescriptor {
+    func currentRenderPassDescriptor(clearDepth: Bool) -> MTLRenderPassDescriptor {
         
         let colorAttachement = passDescriptor.colorAttachments[0]
         colorAttachement?.texture = self.drawable.texture
-        colorAttachement?.clearColor = MTLClearColor(red: 0, green: 0.8, blue: 1, alpha: 1)
+        colorAttachement?.clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
         colorAttachement?.storeAction = .store
         colorAttachement?.loadAction = clearDepth ? .clear : .load
         

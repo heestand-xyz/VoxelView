@@ -5,7 +5,7 @@ import UIKit
 #endif
 import simd
 
-let CHUNK_SIZE = 32
+//let CHUNK_SIZE = 32
 let NUM_SIDES_IN_CUBE = 6
 
 class Chunk: NSObject {
@@ -113,7 +113,7 @@ class Chunk: NSObject {
     ///   - color: The color of the face
     func addFace(block: Block, position:SIMD4<Float>, direction:Block.Direction, color: SIMD4<Float>?) {
         
-       let offset = -Float(CHUNK_SIZE) * Float(gridSpacing) / 2.0 + 1
+       let offset = /*-Float(CHUNK_SIZE) * */ -100 * Float(gridSpacing) / 2.0 + 1
        let offsetArray:SIMD4<Float> = [offset, offset, offset, 0]
         
         for i in 0..<NUM_SIDES_IN_CUBE {

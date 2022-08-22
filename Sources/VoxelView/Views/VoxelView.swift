@@ -8,18 +8,18 @@ public struct VoxelView: ViewRepresentable {
     
     private let texture: MTLTexture
     private let textureID: UUID
-    private let scale: CGFloat
+    private let zoom: CGFloat
     private let rotationX: Angle
     private let rotationY: Angle
     
     public init(texture: MTLTexture,
                 textureID: UUID,
-                scale: CGFloat = 1.0,
+                zoom: CGFloat = 1.0,
                 rotationX: Angle = .zero,
                 rotationY: Angle = .zero) {
         self.texture = texture
         self.textureID = textureID
-        self.scale = scale
+        self.zoom = zoom
         self.rotationX = rotationX
         self.rotationY = rotationY
     }
@@ -36,7 +36,8 @@ public struct VoxelView: ViewRepresentable {
             context.coordinator.renderer?.texture = texture
             context.coordinator.lastTextureID = textureID
         }
-        context.coordinator.renderer?.cameraDistance = Float(scale) * Renderer.defaultCameraDistance
+        let cameraDefaultDistance = context.coordinator.renderer?.cameraDefaultDistance ?? 1.0
+        context.coordinator.renderer?.cameraDistance = cameraDefaultDistance / Float(zoom)
         context.coordinator.renderer?.rotationX = min(max(Float(rotationX.radians), -.pi / 2 + 0.001), .pi / 2 - 0.001)
         context.coordinator.renderer?.rotationY = Float(rotationY.radians)
         view.render()

@@ -50,26 +50,32 @@ vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
     
     uint3 resolution = uniforms->resolution;
     
-    uint3 location = vertices[vid].location;
+    uint index = iid;
+    uint x = index % resolution.x;
+    uint y = (index / resolution.x) % resolution.y;
+    uint z = index / (resolution.x * resolution.y);
+    uint3 xyz = uint3(x, y, z);
     
-    float u = float(location.x + 0.5) / float(resolution.x);
-    float v = float(location.y + 0.5) / float(resolution.y);
-    float w = float(location.z + 0.5) / float(resolution.z);
+    //uint3 location = vertices[vid].location;
+    
+    float u = (float(x) + 0.5) / float(resolution.x);
+    float v = (float(y) + 0.5) / float(resolution.y);
+    float w = (float(z) + 0.5) / float(resolution.z);
     float3 uvw = float3(u, v, w);
     
     float4 color = texture.sample(sampler, uvw);
     
-    float4 sunDirection = { -1, -2, -1, 1} ;
+//    float4 sunDirection = { -1, -2, -1, 1} ;
     
-    float dotProduct = dot(normalize(vertices[vid].normal), normalize(-sunDirection.xyz));
+//    float dotProduct = dot(normalize(vertices[vid].normal), normalize(-sunDirection.xyz));
     
     VertexOut vertexOut;
-    vertexOut.shadow_coord = (uniforms->shadow_mvp_xform_matrix * vertices[vid].position ).xyz;
-    vertexOut.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
-    vertexOut.normal = vertices[vid].normal.xyz;
-    vertexOut.highlighted = vertices[vid].highlighted;
+//    vertexOut.shadow_coord = (uniforms->shadow_mvp_xform_matrix * vertices[vid].position ).xyz;
+    vertexOut.position = uniforms->modelViewProjectionMatrix * (vertices[vid].position + float4(float3(xyz) * 2, 0.0));
+//    vertexOut.normal = vertices[vid].normal.xyz;
+//    vertexOut.highlighted = vertices[vid].highlighted;
     vertexOut.color = color; // vertices[vid].color;
-    vertexOut.directional_light_level = 0.7 + 0.3 * dotProduct;
+//    vertexOut.directional_light_level = 0.7 + 0.3 * dotProduct;
 
     float2 uv = vertices[vid].uv;
     
@@ -83,11 +89,11 @@ vertex VertexOut vertex_project(const device VertexIn *vertices[[buffer(0)]],
     return vertexOut;
 }
 
-fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]],
-                                   texture2d<float> diffuseTexture [[texture(0)]],
-                                   depth2d<float> shadowTexture [[texture(1)]],
-                                   sampler depthSampler [[sampler(1)]])
-{
+fragment float4 fragment_flatcolor(VertexOut vertexIn [[stage_in]]
+//                                   texture2d<float> diffuseTexture [[texture(0)]],
+//                                   depth2d<float> shadowTexture [[texture(1)]],
+//                                   sampler depthSampler [[sampler(1)]]
+) {
 //    return float4(vertexIn.normal.x * 0.5 + 0.5, vertexIn.normal.y * 0.5 + 0.5, vertexIn.normal.z * 0.5 + 0.5 , 1.0);
     
     float4 diffuse = vertexIn.color;
