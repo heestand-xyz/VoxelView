@@ -20,6 +20,9 @@ let package = Package(
     targets: [
         .target(
             name: "VoxelView",
-            dependencies: ["DisplayLink"]),
+            dependencies: ["DisplayLink"],
+            resources: [
+                .copy("Shaders/MainShaders.metal")
+            ]),
     ]
 )
